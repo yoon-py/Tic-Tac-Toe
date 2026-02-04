@@ -6,6 +6,7 @@ const clearScoreBtn = document.getElementById('clearScoreBtn');
 const undoBtn = document.getElementById('undoBtn');
 const playerLabel = document.getElementById('playerLabel');
 const aiLabel = document.getElementById('aiLabel');
+const difficultySelect = document.getElementById('difficultySelect');
 const historyList = document.getElementById('historyList');
 const clearHistoryBtn = document.getElementById('clearHistory');
 const toast = document.getElementById('toast');
@@ -163,10 +164,19 @@ function aiMove() {
 
   if (!emptyIndices.length) return;
 
-  const winMove = findBestMove(aiSymbol);
-  const blockMove = findBestMove(playerSymbol);
-  const center = board[4] === null ? 4 : null;
-  const move = winMove ?? blockMove ?? center ?? emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+  const difficulty = difficultySelect.value;
+  let move = null;
+
+  if (difficulty === 'easy') {
+    move = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+  } else if (difficulty === 'medium') {
+    const winMove = findBestMove(aiSymbol);
+    const blockMove = findBestMove(playerSymbol);
+    const center = board[4] === null ? 4 : null;
+    move = winMove ?? blockMove ?? center ?? emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+  } else {
+    move = findMinimaxMove(aiSymbol);
+  }
 
   placeMove(move, aiSymbol);
 }
@@ -183,6 +193,56 @@ function findBestMove(player) {
     }
   }
   return null;
+}
+
+function findMinimaxMove(player) {
+  let bestScore = -Infinity;
+  let bestMove = null;
+
+  for (const index of board.keys()) {
+    if (board[index] !== null) continue;
+    board[index] = player;
+    const score = minimax(false);
+    board[index] = null;
+    if (score > bestScore) {
+      bestScore = score;
+      bestMove = index;
+    }
+  }
+
+  if (bestMove === null) {
+    return board.findIndex((value) => value === null);
+  }
+  return bestMove;
+}
+
+function minimax(isMaximizing) {
+  const winner = getWinner();
+  if (winner === aiSymbol) return 10;
+  if (winner === playerSymbol) return -10;
+  if (isDraw()) return 0;
+
+  if (isMaximizing) {
+    let bestScore = -Infinity;
+    for (const index of board.keys()) {
+      if (board[index] !== null) continue;
+      board[index] = aiSymbol;
+      const score = minimax(false);
+      board[index] = null;
+      bestScore = Math.max(bestScore, score);
+    }
+    return bestScore;
+  }
+
+  let bestScore = Infinity;
+  for (const index of board.keys()) {
+    if (board[index] !== null) continue;
+    board[index] = playerSymbol;
+    const score = minimax(true);
+    board[index] = null;
+    bestScore = Math.min(bestScore, score);
+  }
+  return bestScore;
 }
 
 function triggerAIMoveIfNeeded() {
@@ -237,5 +297,8 @@ resetBtn.addEventListener('click', () => {
 clearScoreBtn.addEventListener('click', clearScores);
 undoBtn.addEventListener('click', undoMove);
 clearHistoryBtn.addEventListener('click', clearHistory);
+difficultySelect.addEventListener('change', () => {
+  showToast(`난이도: ${difficultySelect.options[difficultySelect.selectedIndex].text}`);
+});
 
 resetGame();

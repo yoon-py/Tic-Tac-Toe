@@ -35,7 +35,14 @@
         <div class="meta">
           <span class="locked" id="playerLabel">플레이어: X</span>
           <span class="locked" id="aiLabel">AI: O</span>
-          <span class="locked">AI 기본 난이도</span>
+          <label class="select">
+            <span>AI 난이도</span>
+            <select id="difficultySelect">
+              <option value="easy">쉬움</option>
+              <option value="medium" selected>중간</option>
+              <option value="hard">어려움</option>
+            </select>
+          </label>
         </div>
 
         <p class="hint">* AI는 기본 난이도입니다. 완벽한 전략은 아닙니다.</p>
