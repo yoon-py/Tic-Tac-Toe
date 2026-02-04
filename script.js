@@ -4,6 +4,8 @@ const scoreText = document.getElementById('scoreText');
 const resetBtn = document.getElementById('resetBtn');
 const clearScoreBtn = document.getElementById('clearScoreBtn');
 const undoBtn = document.getElementById('undoBtn');
+const playerLabel = document.getElementById('playerLabel');
+const aiLabel = document.getElementById('aiLabel');
 const historyList = document.getElementById('historyList');
 const clearHistoryBtn = document.getElementById('clearHistory');
 const toast = document.getElementById('toast');
@@ -23,8 +25,10 @@ let board = Array(9).fill(null);
 let xIsNext = true;
 let gameOver = false;
 let history = [];
-let scores = { X: 0, O: 0, D: 0 };
+let scores = { player: 0, ai: 0, draw: 0 };
 let toastTimer = null;
+let playerSymbol = 'X';
+let aiSymbol = 'O';
 
 function showToast(message) {
   toast.textContent = message;
@@ -40,7 +44,9 @@ function renderBoard() {
     cell.className = `cell ${value ? value.toLowerCase() : ''}`;
     cell.textContent = value ?? '';
     cell.setAttribute('data-index', index.toString());
-    cell.disabled = gameOver || value !== null;
+    const currentSymbol = xIsNext ? 'X' : 'O';
+    const isPlayerTurn = currentSymbol === playerSymbol;
+    cell.disabled = gameOver || value !== null || !isPlayerTurn;
     cell.addEventListener('click', handleMove);
     boardEl.appendChild(cell);
   });
@@ -56,8 +62,10 @@ function renderBoard() {
 
 function updateStatus() {
   if (gameOver) return;
-  turnText.textContent = `${xIsNext ? 'X' : 'O'} 차례`;
-  scoreText.textContent = `X ${scores.X} : ${scores.O} O`;
+  const currentSymbol = xIsNext ? 'X' : 'O';
+  const actor = currentSymbol === playerSymbol ? '내 차례' : 'AI 차례';
+  turnText.textContent = `${currentSymbol} · ${actor}`;
+  scoreText.textContent = `플레이어 ${scores.player} : ${scores.ai} AI`;
 }
 
 function getWinnerLine() {
@@ -105,7 +113,11 @@ function handleEnd() {
   const winner = getWinner();
   if (winner) {
     gameOver = true;
-    scores[winner] += 1;
+    if (winner === playerSymbol) {
+      scores.player += 1;
+    } else {
+      scores.ai += 1;
+    }
     turnText.textContent = `${winner} 승리!`;
     recordHistory(`${winner} 승리`);
     showToast(`${winner} 승리!`);
@@ -114,7 +126,7 @@ function handleEnd() {
 
   if (isDraw()) {
     gameOver = true;
-    scores.D += 1;
+    scores.draw += 1;
     turnText.textContent = '무승부!';
     recordHistory('무승부');
     showToast('무승부!');
@@ -136,11 +148,10 @@ function handleMove(event) {
   if (Number.isNaN(index)) return;
 
   const currentPlayer = xIsNext ? 'X' : 'O';
+  if (currentPlayer !== playerSymbol) return;
   placeMove(index, currentPlayer);
 
-  if (!gameOver && !xIsNext) {
-    setTimeout(aiMove, 350);
-  }
+  triggerAIMoveIfNeeded();
 }
 
 function aiMove() {
@@ -152,12 +163,12 @@ function aiMove() {
 
   if (!emptyIndices.length) return;
 
-  const winMove = findBestMove('O');
-  const blockMove = findBestMove('X');
+  const winMove = findBestMove(aiSymbol);
+  const blockMove = findBestMove(playerSymbol);
   const center = board[4] === null ? 4 : null;
   const move = winMove ?? blockMove ?? center ?? emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
 
-  placeMove(move, 'O');
+  placeMove(move, aiSymbol);
 }
 
 function findBestMove(player) {
@@ -174,6 +185,20 @@ function findBestMove(player) {
   return null;
 }
 
+function triggerAIMoveIfNeeded() {
+  if (gameOver) return;
+  const currentSymbol = xIsNext ? 'X' : 'O';
+  if (currentSymbol !== aiSymbol) return;
+  setTimeout(aiMove, 350);
+}
+
+function swapRoles() {
+  playerSymbol = playerSymbol === 'X' ? 'O' : 'X';
+  aiSymbol = playerSymbol === 'X' ? 'O' : 'X';
+  playerLabel.textContent = `플레이어: ${playerSymbol}`;
+  aiLabel.textContent = `AI: ${aiSymbol}`;
+}
+
 function resetGame() {
   board = Array(9).fill(null);
   history = [];
@@ -181,6 +206,7 @@ function resetGame() {
   xIsNext = true;
   renderBoard();
   updateStatus();
+  triggerAIMoveIfNeeded();
 }
 
 function undoMove() {
@@ -194,7 +220,7 @@ function undoMove() {
 }
 
 function clearScores() {
-  scores = { X: 0, O: 0, D: 0 };
+  scores = { player: 0, ai: 0, draw: 0 };
   updateStatus();
   showToast('점수를 초기화했습니다');
 }
@@ -204,7 +230,10 @@ function clearHistory() {
   showToast('기록을 지웠습니다');
 }
 
-resetBtn.addEventListener('click', resetGame);
+resetBtn.addEventListener('click', () => {
+  swapRoles();
+  resetGame();
+});
 clearScoreBtn.addEventListener('click', clearScores);
 undoBtn.addEventListener('click', undoMove);
 clearHistoryBtn.addEventListener('click', clearHistory);
