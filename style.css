@@ -53,9 +53,12 @@ body {
 
 .effect-layer.draw {
   opacity: 1;
-  background: radial-gradient(circle at 50% 45%, rgba(255, 224, 150, 0.35), transparent 70%),
-    radial-gradient(circle at 30% 70%, rgba(255, 210, 120, 0.25), transparent 60%);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(210, 210, 210, 0.55), transparent 70%),
+    radial-gradient(circle at 30% 70%, rgba(170, 170, 170, 0.35), transparent 60%),
+    linear-gradient(135deg, rgba(110, 110, 110, 0.18), rgba(200, 200, 200, 0.12));
   animation: draw-breeze 1s ease-out;
+  filter: grayscale(0.9) contrast(1.1);
 }
 
 .confetti {
@@ -177,7 +180,7 @@ h1 {
 
 .card.effect-draw {
   animation: draw-glow 0.8s ease-out;
-  box-shadow: 0 16px 40px rgba(255, 200, 90, 0.28);
+  box-shadow: 0 16px 40px rgba(120, 120, 120, 0.35);
 }
 
 .status {
@@ -443,13 +446,13 @@ button:focus-visible {
 
 @keyframes draw-glow {
   0% {
-    filter: saturate(1);
+    filter: saturate(0.8);
   }
   50% {
-    filter: saturate(1.15);
+    filter: saturate(0.5) contrast(1.1);
   }
   100% {
-    filter: saturate(1);
+    filter: saturate(0.8);
   }
 }
 
