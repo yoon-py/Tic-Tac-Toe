@@ -11,6 +11,9 @@
     <div class="bg-orbit"></div>
     <div class="bg-grid"></div>
 
+    <div id="effectLayer" class="effect-layer" aria-hidden="true"></div>
+    <div id="confetti" class="confetti" aria-hidden="true"></div>
+
     <main class="app">
       <header class="hero">
         <p class="eyebrow">간단하지만 끝까지 가는</p>
@@ -18,7 +21,7 @@
         <p class="sub">X와 O가 번갈아 가며 3칸을 연결하면 승리합니다.</p>
       </header>
 
-      <section class="card">
+      <section class="card" id="gameCard">
         <div class="status">
           <span id="turnText">X 차례</span>
           <span id="scoreText">X 0 : 0 O</span>

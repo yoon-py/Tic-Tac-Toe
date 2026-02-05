@@ -7,6 +7,9 @@ const undoBtn = document.getElementById('undoBtn');
 const playerLabel = document.getElementById('playerLabel');
 const aiLabel = document.getElementById('aiLabel');
 const difficultySelect = document.getElementById('difficultySelect');
+const gameCard = document.getElementById('gameCard');
+const effectLayer = document.getElementById('effectLayer');
+const confetti = document.getElementById('confetti');
 const historyList = document.getElementById('historyList');
 const clearHistoryBtn = document.getElementById('clearHistory');
 const toast = document.getElementById('toast');
@@ -36,6 +39,44 @@ function showToast(message) {
   toast.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+function playResultEffect(type) {
+  gameCard.classList.remove('effect-win', 'effect-lose', 'effect-draw');
+  if (type) {
+    gameCard.classList.add(`effect-${type}`);
+    setTimeout(() => {
+      gameCard.classList.remove('effect-win', 'effect-lose', 'effect-draw');
+    }, 900);
+  }
+}
+
+function playOverlayEffect(type) {
+  effectLayer.classList.remove('win', 'lose', 'draw');
+  if (!type) return;
+  effectLayer.classList.add(type);
+  setTimeout(() => effectLayer.classList.remove(type), 1000);
+}
+
+function launchConfetti() {
+  confetti.innerHTML = '';
+  const colors = ['#ff6b35', '#ffd166', '#2a9df4', '#6c63ff', '#34d399'];
+  for (let i = 0; i < 24; i += 1) {
+    const piece = document.createElement('span');
+    piece.className = 'confetti-piece';
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 160 + Math.random() * 160;
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+    piece.style.setProperty('--x', `${x}px`);
+    piece.style.setProperty('--y', `${y}px`);
+    piece.style.setProperty('--r', `${Math.random() * 360}deg`);
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.appendChild(piece);
+  }
+  setTimeout(() => {
+    confetti.innerHTML = '';
+  }, 1200);
 }
 
 function renderBoard() {
@@ -126,6 +167,11 @@ function handleEnd() {
     turnText.textContent = `${winner} 승리!`;
     recordHistory(`${winner} 승리`);
     showToast(`${winner} 승리!`);
+    playResultEffect(winner === playerSymbol ? 'win' : 'lose');
+    playOverlayEffect(winner === playerSymbol ? 'win' : 'lose');
+    if (winner === playerSymbol) {
+      launchConfetti();
+    }
     updateControls();
     return;
   }
@@ -136,6 +182,8 @@ function handleEnd() {
     turnText.textContent = '무승부!';
     recordHistory('무승부');
     showToast('무승부!');
+    playResultEffect('draw');
+    playOverlayEffect('draw');
     updateControls();
   }
 }
@@ -273,6 +321,8 @@ function resetGame() {
   renderBoard();
   updateStatus();
   updateControls();
+  playResultEffect(null);
+  playOverlayEffect(null);
   triggerAIMoveIfNeeded();
 }
 
