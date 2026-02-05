@@ -152,6 +152,8 @@ h1 {
   animation: fade-up 0.9s ease-out 0.1s both;
   position: relative;
   overflow: hidden;
+  transform-origin: center;
+  will-change: transform;
 }
 
 .result-banner {
@@ -183,7 +185,7 @@ h1 {
 }
 
 .card.effect-draw {
-  animation: draw-glow 0.8s ease-out;
+  animation: draw-glow 0.8s ease-out, draw-thump 0.55s ease-out;
   box-shadow: 0 16px 40px rgba(120, 120, 120, 0.35);
 }
 
@@ -498,6 +500,21 @@ button:focus-visible {
   }
   100% {
     filter: saturate(0.8);
+  }
+}
+
+@keyframes draw-thump {
+  0% {
+    transform: scaleY(1);
+  }
+  35% {
+    transform: scaleY(0.95);
+  }
+  60% {
+    transform: scaleY(1.03);
+  }
+  100% {
+    transform: scaleY(1);
   }
 }
 
