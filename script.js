@@ -10,6 +10,7 @@ const difficultySelect = document.getElementById('difficultySelect');
 const gameCard = document.getElementById('gameCard');
 const effectLayer = document.getElementById('effectLayer');
 const confetti = document.getElementById('confetti');
+const resultBanner = document.getElementById('resultBanner');
 const historyList = document.getElementById('historyList');
 const clearHistoryBtn = document.getElementById('clearHistory');
 const toast = document.getElementById('toast');
@@ -49,6 +50,16 @@ function playResultEffect(type) {
       gameCard.classList.remove('effect-win', 'effect-lose', 'effect-draw');
     }, 900);
   }
+}
+
+function showResultBanner(text) {
+  if (!text) {
+    resultBanner.classList.remove('show');
+    resultBanner.textContent = '';
+    return;
+  }
+  resultBanner.textContent = text;
+  resultBanner.classList.add('show');
 }
 
 function playOverlayEffect(type) {
@@ -169,6 +180,7 @@ function handleEnd() {
     showToast(`${winner} 승리!`);
     playResultEffect(winner === playerSymbol ? 'win' : 'lose');
     playOverlayEffect(winner === playerSymbol ? 'win' : 'lose');
+    showResultBanner(null);
     if (winner === playerSymbol) {
       launchConfetti();
     }
@@ -184,6 +196,7 @@ function handleEnd() {
     showToast('무승부!');
     playResultEffect('draw');
     playOverlayEffect('draw');
+    showResultBanner(null);
     updateControls();
   }
 }
@@ -323,6 +336,7 @@ function resetGame() {
   updateControls();
   playResultEffect(null);
   playOverlayEffect(null);
+  showResultBanner(null);
   triggerAIMoveIfNeeded();
 }
 
