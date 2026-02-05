@@ -5,6 +5,7 @@ const resetBtn = document.getElementById('resetBtn');
 const clearScoreBtn = document.getElementById('clearScoreBtn');
 const playerLabel = document.getElementById('playerLabel');
 const aiLabel = document.getElementById('aiLabel');
+const playerSelect = document.getElementById('playerSelect');
 const difficultySelect = document.getElementById('difficultySelect');
 const gameCard = document.getElementById('gameCard');
 const effectLayer = document.getElementById('effectLayer');
@@ -316,11 +317,17 @@ function triggerAIMoveIfNeeded() {
   setTimeout(aiMove, 350);
 }
 
-function swapRoles() {
-  playerSymbol = playerSymbol === 'X' ? 'O' : 'X';
+function setRoles(nextPlayerSymbol) {
+  playerSymbol = nextPlayerSymbol;
   aiSymbol = playerSymbol === 'X' ? 'O' : 'X';
   playerLabel.textContent = `플레이어: ${playerSymbol}`;
   aiLabel.textContent = `AI: ${aiSymbol}`;
+  playerSelect.value = playerSymbol;
+}
+
+function swapRoles() {
+  const nextPlayerSymbol = playerSymbol === 'X' ? 'O' : 'X';
+  setRoles(nextPlayerSymbol);
 }
 
 function resetGame() {
@@ -356,6 +363,10 @@ clearScoreBtn.addEventListener('click', clearScores);
 clearHistoryBtn.addEventListener('click', clearHistory);
 difficultySelect.addEventListener('change', () => {
   showToast(`난이도: ${difficultySelect.options[difficultySelect.selectedIndex].text}`);
+});
+playerSelect.addEventListener('change', () => {
+  setRoles(playerSelect.value);
+  resetGame();
 });
 
 resetGame();
