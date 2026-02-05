@@ -37,6 +37,11 @@ function showToast(message) {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
+function vibrate(pattern) {
+  if (!('vibrate' in navigator)) return;
+  navigator.vibrate(pattern);
+}
+
 function updateScore() {
   scoreText.textContent = `플레이어 ${scores.player} : ${scores.ai} AI`;
 }
@@ -173,6 +178,9 @@ function handleEnd() {
     showResultBanner(null);
     if (winner === playerSymbol) {
       launchConfetti();
+      vibrate([60, 40, 120]);
+    } else {
+      vibrate([120, 60, 60]);
     }
     updateScore();
     updateControls();
@@ -187,6 +195,7 @@ function handleEnd() {
     playResultEffect('draw');
     playOverlayEffect('draw');
     showResultBanner(null);
+    vibrate([80, 40, 80]);
     updateControls();
   }
 }
