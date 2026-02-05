@@ -114,6 +114,7 @@ body {
 
 .hero {
   animation: fade-up 0.9s ease-out both;
+  text-align: center;
 }
 
 .eyebrow {
@@ -128,12 +129,15 @@ h1 {
   font-family: 'Black Han Sans', sans-serif;
   font-size: clamp(36px, 6vw, 64px);
   margin: 0 0 12px;
+  text-align: center;
 }
 
 .sub {
   color: var(--text-dim);
   margin: 0;
   max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .card {
