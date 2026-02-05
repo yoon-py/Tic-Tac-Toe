@@ -3,7 +3,6 @@ const turnText = document.getElementById('turnText');
 const scoreText = document.getElementById('scoreText');
 const resetBtn = document.getElementById('resetBtn');
 const clearScoreBtn = document.getElementById('clearScoreBtn');
-const undoBtn = document.getElementById('undoBtn');
 const playerLabel = document.getElementById('playerLabel');
 const aiLabel = document.getElementById('aiLabel');
 const difficultySelect = document.getElementById('difficultySelect');
@@ -29,7 +28,6 @@ const WIN_LINES = [
 let board = Array(9).fill(null);
 let xIsNext = true;
 let gameOver = false;
-let history = [];
 let scores = { player: 0, ai: 0, draw: 0 };
 let toastTimer = null;
 let playerSymbol = 'X';
@@ -204,7 +202,6 @@ function handleEnd() {
 function placeMove(index, player) {
   if (board[index] || gameOver) return;
   board[index] = player;
-  history.push(index);
   xIsNext = player === 'O';
   renderBoard();
   updateStatus();
@@ -328,7 +325,6 @@ function swapRoles() {
 
 function resetGame() {
   board = Array(9).fill(null);
-  history = [];
   gameOver = false;
   xIsNext = true;
   renderBoard();
@@ -340,15 +336,6 @@ function resetGame() {
   triggerAIMoveIfNeeded();
 }
 
-function undoMove() {
-  if (history.length === 0 || gameOver) return;
-  const last = history.pop();
-  if (last === undefined) return;
-  board[last] = null;
-  xIsNext = !xIsNext;
-  renderBoard();
-  updateStatus();
-}
 
 function clearScores() {
   scores = { player: 0, ai: 0, draw: 0 };
@@ -366,7 +353,6 @@ resetBtn.addEventListener('click', () => {
   resetGame();
 });
 clearScoreBtn.addEventListener('click', clearScores);
-undoBtn.addEventListener('click', undoMove);
 clearHistoryBtn.addEventListener('click', clearHistory);
 difficultySelect.addEventListener('change', () => {
   showToast(`난이도: ${difficultySelect.options[difficultySelect.selectedIndex].text}`);

@@ -32,7 +32,6 @@
         <div class="controls">
           <button id="resetBtn" class="primary">한 판 더</button>
           <button id="clearScoreBtn" class="ghost">점수 초기화</button>
-          <button id="undoBtn" class="ghost">한 수 되돌리기</button>
         </div>
 
         <div class="meta">
@@ -56,6 +55,25 @@
           <button id="clearHistory" class="text">기록 지우기</button>
         </div>
         <ul id="historyList" class="history-list" aria-live="polite"></ul>
+      </section>
+
+      <section class="card contact">
+        <h2>문의하기</h2>
+        <form class="contact-form" action="https://formspree.io/f/xnjbanwa" method="POST">
+          <label>
+            <span>이름</span>
+            <input type="text" name="name" required />
+          </label>
+          <label>
+            <span>이메일</span>
+            <input type="email" name="email" required />
+          </label>
+          <label class="full">
+            <span>문의 내용</span>
+            <textarea name="message" rows="4" required></textarea>
+          </label>
+          <button type="submit" class="primary">보내기</button>
+        </form>
       </section>
     </main>
 
